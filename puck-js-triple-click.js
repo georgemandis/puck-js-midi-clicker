@@ -4,9 +4,8 @@ const urls = ["https://midi.mand.is", "https://george.mand.is", "https://snaptor
 var clickcount = 0;
 var clickevent = null;
 
-setWatch(function (e) {
+setWatch((e) => {
   clickcount++;
-
   if (clickevent !== null) clearTimeout(clickevent);
 
   if (clickcount === 1) {
@@ -15,9 +14,9 @@ setWatch(function (e) {
     setLEDS(true, false, false);
   } else if (clickcount === 3) {
     setLEDS(false, false, true);
-  } else {    
+  } else {
     setLEDS(true, true, true);
-    
+
     // Initiate MIDI BLE connection 
     NRF.setServices({
       "03B80E5A-EDE8-4B33-A751-6CE34EC4C700": { // MIDI
@@ -41,7 +40,7 @@ setWatch(function (e) {
     ]);
   }
 
-  clickevent = setTimeout(function () {
+  clickevent = setTimeout(() => {
     if (clickcount === 1) {
       console.log("Click 1");
       NRF.nfcURL(urls[0]);
@@ -55,7 +54,7 @@ setWatch(function (e) {
       NRF.nfcURL(urls[2]);
       midiCC(CHANNEL, CONTROLLER + 2, 127);
     }
-    
+
     clickcount = 0;
   }, 350);
 }, BTN, {
@@ -64,11 +63,9 @@ setWatch(function (e) {
   repeat: true
 });
 
-setWatch(function (e) {
-  LED1.reset();
-  LED2.reset();
-  LED3.reset();
-  setTimeout(function () {
+setWatch((e) => {
+  setLEDS(false, false, false);
+  setTimeout(() => {
     clickevent = null;
   }, 400);
 }, BTN, {
@@ -77,7 +74,7 @@ setWatch(function (e) {
   repeat: true
 });
 
-function midiCC(channel, controller, value) {
+midiCC(channel, controller, value) => {
   NRF.updateServices({
     "03B80E5A-EDE8-4B33-A751-6CE34EC4C700": { // MIDI
       "7772E5DB-3868-4112-A1A9-F2669D106BF3": {
@@ -88,7 +85,7 @@ function midiCC(channel, controller, value) {
   });
 }
 
-function setLEDS(LED1on, LED2on, LED3on) {
+setLEDS(LED1on, LED2on, LED3on) => {
   LED1.reset();
   LED2.reset();
   LED3.reset();
@@ -96,7 +93,6 @@ function setLEDS(LED1on, LED2on, LED3on) {
   if (LED1on) LED1.set();
   if (LED2on) LED2.set();
   if (LED3on) LED3.set();
-
 }
 
 NRF.nfcURL(urls[0]);
