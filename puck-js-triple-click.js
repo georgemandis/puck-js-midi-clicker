@@ -63,6 +63,9 @@ const setLEDS = (LED1on, LED2on, LED3on) => {
   if (LED1on) LED1.set();
   if (LED2on) LED2.set();
   if (LED3on) LED3.set();
-}
+};
 
 NRF.nfcURL(urls[0]);
+
+NRF.on('NFCon', function() { LED1.write(true);});
+NRF.on('NFCoff', function() { LED1.write(false);});
