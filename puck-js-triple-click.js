@@ -5,6 +5,7 @@ var clickcount = 0;
 var clickevent = null;
 
 const midi = require("ble_midi");
+midi.init();
 
 setWatch((e) => {
   clickcount++;
@@ -18,8 +19,6 @@ setWatch((e) => {
     setLEDS(false, false, true);
   } else {
     setLEDS(true, true, true);
-
-    midi.init();
   }
 
   clickevent = setTimeout(() => {
