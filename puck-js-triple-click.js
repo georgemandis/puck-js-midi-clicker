@@ -8,15 +8,15 @@ let flashLEDs = false;
 
 const midi = require("ble_midi");
 
-    midi.init();
-
+midi.init();
 
 setWatch((e) => {
-  
-
-  
   clickcount++;
-  if (clickevent !== null) clearTimeout(clickevent);
+  try {
+    if (clickevent !== null) clearTimeout(clickevent);
+  } catch (e) {
+    console.log("Oops!", e);
+  }
 
   if (clickcount === 1) {
     setLEDS(false, true, false);
@@ -27,8 +27,6 @@ setWatch((e) => {
   } else {
     setLEDS(true, true, true);
   }
-
-  
 
   clickevent = setTimeout(() => {
     if (clickcount === 1) {
@@ -50,22 +48,22 @@ setWatch((e) => {
       console.log("Click 4");
       midi.send(CHANNEL, CONTROLLER + 3, 127);
       if (!flashLEDs) {
-          let flashLEDState = false;
-          flashLEDs = setInterval(() => {
+        let flashLEDState = false;
+        flashLEDs = setInterval(() => {
           flashLEDState = !flashLEDState;
           setLEDS(flashLEDState, !flashLEDState, false);
-        },100);
-      }else{
+        }, 100);
+      } else {
         disableFlashingLEDs();
-      }      
+      }
     }
     clickcount = 0;
   }, 350);
 }, BTN, {
-  edge: "rising",
-  debounce: 10,
-  repeat: true
-});
+    edge: "rising",
+    debounce: 10,
+    repeat: true
+  });
 
 setWatch((e) => {
   setLEDS(false, false, false);
@@ -73,16 +71,20 @@ setWatch((e) => {
     clickevent = null;
   }, 400);
 }, BTN, {
-  edge: "falling",
-  debounce: 10,
-  repeat: true
-});
+    edge: "falling",
+    debounce: 10,
+    repeat: true
+  });
 
 const disableFlashingLEDs = () => {
-  if (flashLEDs) { 
-    clearInterval(flashLEDs);
+  if (flashLEDs) {
+    try {
+      clearInterval(flashLEDs);
+    } catch (e) {
+      console.log("Oops!", e);
+    }
     flashLEDs = false;
-    setLEDS(false,false,false);
+    setLEDS(false, false, false);
   }
 }
 const setLEDS = (LED1on, LED2on, LED3on) => {
