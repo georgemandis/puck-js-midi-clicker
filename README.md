@@ -11,6 +11,6 @@ There are a million ways to repurpose this but I used mine to demonstrate non-mu
 
 Also, because Puck.js is fun and NFC tags are nifty, I've added some lines to take advantage of the `NRF.nfcURL()` method. In addition to sending a MIDI single for one, two or three clicks, a different NFC URL is broadcast as well. This let me use it a little bit like an invisible business card for capable phones and could be theoretically useful at these talks when I'm telling people to visit my [MIDI resource website](https://midi.mand.is).
 
-Thanks to [joebowbeer/PuckCC](https://github.com/joebowbeer/PuckCC) for identifying the NRF values to set the Puck.js to broadcast as a BLE MIDI device!
+Thanks to [joebowbeer/PuckCC](https://github.com/joebowbeer/PuckCC) for identifying the NRF values to set the Puck.js to broadcast as a BLE MIDI device! It's now available as a module (`ble_midi`) to all Espruino devices. You can read more about that here: [https://www.espruino.com/Puck.js+MIDI](https://www.espruino.com/Puck.js+MIDI)
 
 [midi.mand.is](http://midi.mand.is)
