@@ -1,16 +1,58 @@
-# Puck.js MIDI Clicker
-Use Puck.js as a BLE MIDI controller. Reacts to single (1), double (2) and triple (3) clicks. Four (4) clicks will broadcast the initial MIDI BLE signal that your computer will be looking for to pair with.
+# puck-js-midi-clicker
 
-The fastest and simplest way to load this script onto your [Puck.js](https://www.puck-js.com/) is to use the [web IDE](https://www.espruino.com/Web+IDE). It should only take a few moments to connect and upload.
+Repo: <https://github.com/georgemandis/puck-js-midi-clicker> (this folder is the 2026 refresh of it)
 
-To start broadcasting a BLE MIDI signal that will allow your computer to pair with Puck.js as a MIDI device you have to triple click the device.
+A [Puck.js](https://www.puck-js.com/) as a Bluetooth MIDI controller. Count the clicks on its one
+button, send a CC per count. I used it as a slide clicker for talks: the slide deck listened for MIDI
+and nobody could tell what I was holding. The 2017 version talked to the BLE MIDI service by hand;
+since 2019 Espruino ships that as the `ble_midi` module, thanks to
+[joebowbeer/PuckCC](https://github.com/joebowbeer/PuckCC) working out the advertising bytes.
 
-Sends CC values of **80** (single-click), **81** (double-click) and **82** (triple-click) on channel 10.
+## What it sends
 
-There are a million ways to repurpose this but I used mine to demonstrate non-musical MIDI applications as a slideshow clicker for [my presentation](https://speakerdeck.com/georgemandis). 
+Status byte `0xBA`: control change, channel 11 if you count from 1 (the Explorer does), channel 10 if
+you count from 0 (the script and the `ble_midi` module do). Value is always 127.
 
-Also, because Puck.js is fun and NFC tags are nifty, I've added some lines to take advantage of the `NRF.nfcURL()` method. In addition to sending a MIDI single for one, two or three clicks, a different NFC URL is broadcast as well. This let me use it a little bit like an invisible business card for capable phones and could be theoretically useful at these talks when I'm telling people to visit my [MIDI resource website](https://midi.mand.is).
+| Clicks | Message | Bytes | Also |
+|---|---|---|---|
+| 1 | CC 80 | `BA 50 7F` | NFC tag set to `urls[0]`, green LED while down |
+| 2 | CC 81 | `BA 51 7F` | NFC tag set to `urls[1]`, red LED |
+| 3 | CC 82 | `BA 52 7F` | NFC tag set to `urls[2]`, blue LED |
+| 4 | CC 83 | `BA 53 7F` | red and green flash until the next four clicks, all three LEDs while down |
 
-Thanks to [joebowbeer/PuckCC](https://github.com/joebowbeer/PuckCC) for identifying the NRF values to set the Puck.js to broadcast as a BLE MIDI device! It's now available as a module (`ble_midi`) to all Espruino devices. You can read more about that here: [https://www.espruino.com/Puck.js+MIDI](https://www.espruino.com/Puck.js+MIDI)
+A run of clicks ends after 350 ms of quiet. Nothing is sent on release. The device advertises as
+`PuckCC`, the name `ble_midi` uses.
 
-[midi.mand.is](http://midi.mand.is)
+The NFC part is unrelated to MIDI: a phone held to the Puck opens the URL for the last click count. A
+business card with three sides. Change `urls` or delete the three `NRF.nfcURL` lines.
+
+## Flash
+
+1. Open the [Espruino Web IDE](https://www.espruino.com/ide/) in Chrome (Web Bluetooth; Firefox and
+   Safari cannot). Click the connect icon, pick the Puck.
+2. Paste `puck-js-triple-click.js` into the right-hand editor and click Send to Espruino.
+3. In the left-hand console type `save()` so the code survives a battery pull.
+
+## Pair
+
+The Puck advertises MIDI as soon as the script runs. On macOS: Audio MIDI Setup, Window, Show MIDI
+Studio, the Bluetooth icon, Connect next to `PuckCC`. It then appears to every MIDI program as a
+source named `PuckCC`, including Web MIDI in Chrome. On iOS any app with a Bluetooth MIDI panel
+(GarageBand has one). Windows needs a helper app for Bluetooth MIDI; loopMIDI plus MIDIberry is the
+usual pair, untested here.
+
+## Battery
+
+A CR2032. One lasted me a conference season of talks. Disconnect the IDE after `save()`; the Puck
+keeps running on its own.
+
+## Other Espruino scripts
+
+- `../espruino-zoom-muter/`: the same button as a Bluetooth keyboard, a telephony mute button, or a
+  MIDI CC.
+- `midi-experiments/pucks-js-magnetometer-to-midi-signal.js` on my disk turned the magnetometer into
+  three notes with the light sensor as volume. Not cleaned up yet.
+
+## Licence
+
+MIT, since 2017. See `LICENSE`.
